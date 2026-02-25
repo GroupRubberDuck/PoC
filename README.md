@@ -12,3 +12,9 @@ poetry run mypy .
 poetry run ruff check .
 poetry run pytest
 ```
+
+### Docker
+```bash
+touch .env
+docker compose up
+```
