@@ -2,7 +2,8 @@
 
 ## Sviluppo
 ```bash
-poetry run flask --app src.poc.app:create_app run --debug 
+poetry install
+poetry run flask --app src.poc.app:create_app run --debug
 ```
 
 ### Validazione
