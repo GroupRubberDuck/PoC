@@ -1,5 +1,7 @@
 # PoC
 
+
+
 ## Sviluppo
 ```bash
 poetry install
@@ -14,3 +16,7 @@ poetry run pytest
 poetry run strictdoc export .
 ```
 
+### Documentazione
+[Documentazione StrictDoc](https://strictdoc.readthedocs.io/en/stable/stable/docs/strictdoc_01_user_guide.html)
+[Documentazione Flask](https://flask.palletsprojects.com/en/stable/)
+[Documentazione mypy](https://mypy.readthedocs.io/en/stable/getting_started.html)
