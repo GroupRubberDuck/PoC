@@ -25,4 +25,4 @@ RUN poetry install --no-root
 COPY . .
 
 WORKDIR /PoC/src/poc/
-CMD ["poetry", "run", "python", "routes.py"]
+CMD ["poetry", "run", "python", "app.py"]
