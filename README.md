@@ -17,6 +17,6 @@ poetry run strictdoc export .
 ```
 
 ### Documentazione
-[Documentazione StrictDoc](https://strictdoc.readthedocs.io/en/stable/stable/docs/strictdoc_01_user_guide.html)
-[Documentazione Flask](https://flask.palletsprojects.com/en/stable/)
-[Documentazione mypy](https://mypy.readthedocs.io/en/stable/getting_started.html)
+- [StrictDoc](https://strictdoc.readthedocs.io/en/stable/stable/docs/strictdoc_01_user_guide.html)
+- [Flask](https://flask.palletsprojects.com/en/stable/)
+- [mypy](https://mypy.readthedocs.io/en/stable/getting_started.html)
