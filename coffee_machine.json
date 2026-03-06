@@ -1,0 +1,185 @@
+{
+    "info": {
+        "name": "Coffee Machine",
+        "os": "Linux Embedded",
+        "description": "Provide a description of the intended functionality of the device."
+    },
+    "assets": [
+        {
+            "name": "Mosquitto Client",
+            "description": "Mosquitto Client",
+            "type": "security",
+            "dt": {
+                "ACM-1": {
+                    "DN-1": false,
+                    "DN-2": false,
+                    "DN-3": false,
+                    "DN-4": false
+                },
+                "ACM-2": {
+                    "DN-1": false
+                }
+            }
+        },
+        {
+            "name": "Mosquitto Client configuration",
+            "description": "Mosquitto Client configuration",
+            "type": "security",
+            "dt": {
+                "ACM-1": {
+                    "DN-1": false,
+                    "DN-2": false,
+                    "DN-3": false,
+                    "DN-4": false
+                },
+                "ACM-2": {
+                    "DN-1": false
+                }
+            }
+        },
+        {
+            "name": "wpa_supplicant",
+            "description": "wpa_supplicant",
+            "type": "security",
+            "dt": {
+                "ACM-1": {
+                    "DN-1": false,
+                    "DN-2": false,
+                    "DN-3": false,
+                    "DN-4": false
+                },
+                "ACM-2": {
+                    "DN-1": false
+                }
+            }
+        },
+        {
+            "name": "wpa_supplicant configuration",
+            "description": "wpa_supplicant configuration",
+            "type": "security",
+            "dt": {
+                "ACM-1": {
+                    "DN-1": false,
+                    "DN-2": false,
+                    "DN-3": false,
+                    "DN-4": false
+                },
+                "ACM-2": {
+                    "DN-1": false
+                }
+            }
+        },
+        {
+            "name": "SSH client",
+            "description": "SSH client",
+            "type": "security",
+            "dt": {
+                "ACM-1": {
+                    "DN-1": true,
+                    "DN-2": true,
+                    "DN-3": true,
+                    "DN-4": true
+                },
+                "ACM-2": {
+                    "DN-1": true
+                }
+            }
+        },
+        {
+            "name": "SSH client configuration",
+            "description": "SSH client configuration",
+            "type": "security",
+            "dt": {
+                "ACM-1": {
+                    "DN-1": true,
+                    "DN-2": true,
+                    "DN-3": true,
+                    "DN-4": true
+                },
+                "ACM-2": {
+                    "DN-1": true
+                }
+            }
+        },
+        {
+            "name": "DHCP Client",
+            "description": "DHCP Client",
+            "type": "network",
+            "dt": {
+                "ACM-1": {
+                    "DN-1": false,
+                    "DN-2": false,
+                    "DN-3": false,
+                    "DN-4": false
+                },
+                "ACM-2": {
+                    "DN-1": false
+                }
+            }
+        },
+        {
+            "name": "DHCP Client configuration",
+            "description": "DHCP Client configuration",
+            "type": "network",
+            "dt": {
+                "ACM-1": {
+                    "DN-1": false,
+                    "DN-2": false,
+                    "DN-3": false,
+                    "DN-4": false
+                },
+                "ACM-2": {
+                    "DN-1": false
+                }
+            }
+        },
+        {
+            "name": "DNS Client configuration",
+            "description": "DNS Client configuration",
+            "type": "network",
+            "dt": {
+                "ACM-1": {
+                    "DN-1": false,
+                    "DN-2": false,
+                    "DN-3": false,
+                    "DN-4": false
+                },
+                "ACM-2": {
+                    "DN-1": false
+                }
+            }
+        },
+        {
+            "name": "Mosquitto broker",
+            "description": "Mosquitto broker",
+            "type": "network",
+            "dt": {
+                "ACM-1": {
+                    "DN-1": false,
+                    "DN-2": false,
+                    "DN-3": false,
+                    "DN-4": false
+                },
+                "ACM-2": {
+                    "DN-1": false
+                }
+            }
+        },
+        {
+            "name": "Mosquitto broker configuration",
+            "description": "Mosquitto broker configuration",
+            "type": "network",
+            "dt": {
+                "ACM-1": {
+                    "DN-1": false,
+                    "DN-2": false,
+                    "DN-3": false,
+                    "DN-4": false
+                },
+                "ACM-2": {
+                    "DN-1": false
+                }
+            }
+        }
+    ]
+}
