@@ -140,3 +140,106 @@ svg {
     dominant-baseline: middle;
     text-anchor: middle;
 }
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+    gap: 2em;
+    margin-top: 2em;
+}
+
+.card {
+    border: 2px solid #000;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.card-header {
+    padding: 0.75em 1em;
+    background-color: #fff;
+    border-bottom: 1px solid #dde1e7;
+}
+
+.asset-type {
+    display: inline-block;
+    font-size: 1em;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #fff;
+    background-color: #3B7DEE;
+    border-radius: 4px;
+    padding: 0.15em 0.6em;
+    margin-bottom: 0.5em;
+}
+
+.asset-name {
+    font-size: 1em;
+    font-weight: 700;
+    color: #000;
+}
+
+.asset-desc {
+    font-size: 0.8em;
+    color: gray;
+    margin-top: 0.15em;
+}
+
+.card table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85em;
+}
+
+.card table th,
+.card table td {
+    padding: 0.5em 0.75em;
+    text-align: center;
+    border-bottom: 1px solid #000;
+}
+
+.card table th {
+    background-color: #f0f2f5d8;
+    font-weight: 700;
+    color: #000;
+}
+
+.card table th:first-child,
+.card table td:first-child {
+    text-align: left;
+    font-weight: 600;
+    color: #000;
+    background-color: #f0f2f5d8;
+}
+
+.card table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.val-true {
+    background-color: var(--val-true-bg);
+    color: var(--val-true-text);
+    font-weight: 600;
+}
+
+.val-false {
+    background-color: var(--val-false-bg);
+    color: var(--val-false-text);
+    font-weight: 600;
+}
+
+.report-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1em;
+}
+
+.btn-export {
+    display: inline-block;
+    background-color: var(--link-bg);
+    color: var(--link-text);
+    text-decoration: none;
+    font-size: 1em;
+    font-weight: bold;
+    padding: 0.5em 1.4em;
+    border-radius: 5px;
+}
