@@ -1,0 +1,142 @@
+* {
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+:root {
+    --link-bg: #3B7DEE;
+    --link-text: #FFFFFF;
+    --label-yes: #43c864;
+    --label-no: #ff4d4d;
+    --node-border: #666971;
+    --node-question: #c8d0e0;
+    --node-pass: var(--label-yes);
+    --node-fail: var(--label-no);
+    --node-na: #52d5ec;
+    --node-link: #2a3245;
+    --disabled-opacity: 0.4;
+    --node-hover-shadow: #717171;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+}
+
+main {
+    padding: 4em;
+}
+
+h1 {
+    margin: 0 0 0.5em 0;
+}
+
+form {
+    margin-bottom: 1em;
+}
+
+#tree-container {
+    height: calc(100vh - 18em);
+    overflow: hidden;
+    position: relative;
+}
+
+svg {
+    width: 100%;
+    height: 100%;
+}
+
+.buttons {
+    margin-top: 1em;
+    display: flex;
+}
+
+.buttons a {
+    background-color: var(--link-bg);
+    color: var(--link-text);
+    text-decoration: none;
+    border-radius: 5px;
+    padding: 0.5em 2em;
+    display: inline-block;
+}
+
+.buttons .btnBack {
+    margin-left: 0;
+    margin-right: auto;
+}
+
+.buttons .btnForward {
+    margin-left: auto;
+    margin-right: 0;
+}
+
+.link {
+    fill: none;
+    stroke: var(--node-link);
+    stroke-width: 2px;
+    transition: stroke 0.3s;
+}
+
+.edge-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    pointer-events: none;
+}
+
+.edge-label.yes {
+    fill: var(--label-yes);
+}
+
+.edge-label.no {
+    fill: var(--label-no);
+}
+
+.node {
+    cursor: pointer;
+}
+
+.node rect {
+    rx: 6px;
+    ry: 6px;
+    stroke-width: 1.5px;
+    stroke: var(--node-border);
+    transition: filter 0.2s;
+}
+
+.node:hover rect {
+    filter: drop-shadow(0 0 2px var(--node-hover-shadow));
+}
+
+.node.internal rect,
+.node.root rect {
+    fill: var(--node-question);
+}
+
+.node.leaf-pass rect {
+    fill: var(--node-pass);
+}
+
+.node.leaf-fail rect {
+    fill: var(--node-fail);
+}
+
+.node.leaf-na rect {
+    fill: var(--node-na);
+}
+
+.node.disabled rect,
+.node.disabled text,
+.link.disabled,
+.edge-label.disabled {
+    opacity: var(--disabled-opacity);
+    stroke-opacity: var(--disabled-opacity);
+}
+
+.node text {
+    font-size: 0.75em;
+    pointer-events: none;
+    dominant-baseline: middle;
+    text-anchor: middle;
+}
