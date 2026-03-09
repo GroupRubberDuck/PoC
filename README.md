@@ -1,7 +1,6 @@
 # PoC
 
 
-
 ## Sviluppo
 ```bash
 poetry install
@@ -14,6 +13,12 @@ poetry run mypy .
 poetry run ruff check .
 poetry run pytest
 poetry run strictdoc export .
+```
+
+## Deploy
+```bash
+docker build -t grouprubberduck/poc .
+docker run --rm -d -p 8080:8080 grouprubberduck/poc
 ```
 
 ### Documentazione

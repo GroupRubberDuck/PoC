@@ -24,5 +24,4 @@ RUN poetry install --no-root
 
 COPY . .
 
-WORKDIR /PoC/src/poc/
-CMD ["poetry", "run", "python", "flask"]
+CMD ["poetry", "run", "waitress-serve", "--call", "src.poc.app:create_app"]
