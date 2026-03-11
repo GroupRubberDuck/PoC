@@ -1,9 +1,13 @@
-from flask import Blueprint, render_template, request, redirect, make_response
+from flask import Blueprint, render_template, request, redirect, make_response, flash, current_app, url_for
 from werkzeug.wrappers import Response
+from pymongo import MongoClient
 
 from .dt import DECISION_TREE
 from .adapters import D3JSNodeAdapter
 from fpdf import FPDF
+
+import json
+import os
 
 bp = Blueprint("main", __name__)
 
@@ -200,3 +204,51 @@ def update_decision_tree(asset_id: int, requirement: str) -> Response:
         CHOICES[requirement][updateKey] = updateRawValue == "true"
 
     return redirect(f"/dt/{asset_id}/{requirement}")
+
+
+
+
+@bp.route("/", methods=["GET", "POST"])
+def import_page():
+    if request.method == "POST":
+        if 'file_json' not in request.files:
+            flash("Nessun file inviato al form.", "error")
+            return redirect(url_for("main.import_page"))
+
+        uploaded_file = request.files["file_json"]
+        filename = uploaded_file.filename
+        if filename == '':
+            flash("Nessun file selezionato.", "error")
+            return redirect(url_for("main.import_page"))
+        
+        file_ext = os.path.splitext(filename)[1].lower()
+        if file_ext != '.json':
+            flash("Il file deve avere estensione .json", "error")
+            return redirect(url_for("main.import_page"))
+        
+        uploaded_file.seek(0, os.SEEK_END)
+        file_length = uploaded_file.tell()
+        uploaded_file.seek(0, os.SEEK_SET)
+        if file_length > (1024 * 1024):
+            flash("Il file supera la dimensione massima consentita di 1 MB.", "error")
+            return redirect(url_for("main.import_page"))
+        
+        try:
+            data = json.load(uploaded_file)            
+            return redirect("/dt/1/ACM-1")
+            
+        except json.JSONDecodeError:
+            flash("Errore: Il file caricato non è un JSON valido o è malformato.", "error")
+            return redirect(url_for("main.import_page"))
+        except Exception as e:
+            flash(f"Errore imprevisto durante la lettura: {str(e)}", "error")
+            return redirect(url_for("main.import_page"))
+    
+    elif request.method == "GET":
+        return render_template(
+            "import.html", 
+            title="Importa Configurazione", 
+            page_title="Carica File JSON"
+        )
+
+

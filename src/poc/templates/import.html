@@ -1,0 +1,29 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<div class="import-container">
+
+    <!--MESSAGGI DI ERRORE-->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-messages">
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}" style="color: red">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% endwith %}
+    
+    <form method="POST" enctype="multipart/form-data">
+        <div>
+            <label for="file_json">Scegli un file JSON:</label>
+            <input type="file" id="file_json" name="file_json" accept=".json" required>
+        </div>
+        <button type="submit">
+            Importa
+        </button>
+    </form>
+</div>
+{% endblock %}
