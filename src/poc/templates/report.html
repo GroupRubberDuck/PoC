@@ -2,11 +2,14 @@
 
 {% block content %}
 <header>
-  <p>Asset Security &amp; Network Overview</p>
+  <p>Asset Security &amp; Network Overview -- {{ info.os }}</p>
+  {% if info.description %}
+  <p class="device-desc">{{ info.description }}</p>
+  {% endif %}
 </header>
 
 <div class="report-actions">
-  <a href="{{ url_for('main.report_export') }}" class="btn-export">
+  <a href="{{ url_for('main.report_export',  device_id=device_id) }}" class="btn-export">
     &#8681; Esporta PDF
   </a>
 </div>
@@ -36,9 +39,9 @@
             {% if col in asset.dt and row in asset.dt[col] %}
               {% set val = asset.dt[col][row] %}
               {% if val == true %}
-                <td class="val-true">✓ True</td>
+                <td class="val-true">&#10003; True</td>
               {% else %}
-                <td class="val-false">✗ False</td>
+                <td class="val-true">&#10007; False</td>
               {% endif %}
             {% else %}
               <td class="val-na">N.A.</td>
