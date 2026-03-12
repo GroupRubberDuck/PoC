@@ -243,3 +243,94 @@ svg {
     padding: 0.5em 1.4em;
     border-radius: 5px;
 }
+
+/* --- PAGINA DI IMPORTAZIONE --- */
+
+.import-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 3em; 
+    text-align: center;
+}
+
+.import-instruction {
+    font-size: 1rem;
+    margin-bottom: 2em;
+    color: #000;
+}
+
+.import-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 600px;
+}
+
+.file-drop-area {
+    width: 100%;
+    margin-bottom: 1.5em; 
+}
+
+.file-drop-area input[type="file"] {
+    display: none;
+}
+
+.file-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2.5em 3.5em; 
+    background-color: #f2f2f2;
+    border: 1px dashed #000;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 1rem;
+    color: #000;
+}
+
+.file-label:hover {
+    background-color: #e6e6e6;
+}
+
+.file-label span {
+    max-width: none; 
+    text-align: left;
+}
+
+.file-label svg {
+    width: 24px;
+    height: 24px;
+    stroke-width: 2px;
+}
+
+.flash-messages {
+    margin-bottom: 1.5em;
+    width: 100%;
+}
+
+.alert {
+    color: var(--label-no); 
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.btn-import {
+    background-color: var(--link-bg);
+    color: var(--link-text);
+    border: none;
+    border-radius: 8px;
+    padding: 0.8em 4.5em;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    position: static; 
+    transform: none;
+}
+
+.btn-import:hover {
+    opacity: 0.9;
+}
