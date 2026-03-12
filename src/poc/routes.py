@@ -185,7 +185,7 @@ def decision_tree(device_id: str, asset_id: int, requirement: str) -> Response|s
         next_asset_id += 1
 
     forward_link: str = f"/{device_id}/dt/{next_asset_id}/{REQUIREMENTS[next_req_idx]}"
-    if next_req_idx == 0 and next_asset_id > len(device.assets):
+    if next_req_idx == 0 and next_asset_id >= len(device.assets):
         # Se il prossimo requisito è il primo (indice 0) e l'asset è l'ultimo,
         # vuol dire che si è raggiunta la fine della visualizzazione dei decision tree
         # e si può passare alla pagina di report
