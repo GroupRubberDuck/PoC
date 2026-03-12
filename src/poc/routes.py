@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, request, redirect, make_response, flash, current_app, url_for
 from werkzeug.wrappers import Response
-from pymongo import MongoClient
+from pydantic import ValidationError
 
+from .models import DeviceConfig
 from .dt import DECISION_TREE
 from .adapters import D3JSNodeAdapter
 from fpdf import FPDF
@@ -10,6 +11,7 @@ import json
 import os
 
 bp = Blueprint("main", __name__)
+
 
 # 
 # Blocco di costanti temporanee
@@ -226,20 +228,38 @@ def import_page():
             flash("Il file deve avere estensione .json", "error")
             return redirect(url_for("main.import_page"))
         
-        uploaded_file.seek(0, os.SEEK_END)
-        file_length = uploaded_file.tell()
-        uploaded_file.seek(0, os.SEEK_SET)
-        if file_length > (1024 * 1024):
+        if request.content_length > (1024 * 1024):
             flash("Il file supera la dimensione massima consentita di 1 MB.", "error")
             return redirect(url_for("main.import_page"))
         
         try:
-            data = json.load(uploaded_file)            
+            raw_data = json.load(uploaded_file)
+            validated_device = DeviceConfig.model_validate(raw_data)
+            device_dict = validated_device.model_dump()
+            device_dict["status"] = "Imported"
+
+            devices_collection = current_app.db["devices"]
+
+            result = devices_collection.insert_one(device_dict)
+            new_device_id = str(result.inserted_id)
+
+            flash("Configurazione importata e validata con successo!", "success")         
             return redirect("/dt/1/ACM-1")
             
         except json.JSONDecodeError:
             flash("Errore: Il file caricato non è un JSON valido o è malformato.", "error")
             return redirect(url_for("main.import_page"))
+        
+        except ValidationError as e:
+            error_messages = []
+            for error in e.errors():
+                field_path = " -> ".join(str(loc) for loc in error['loc'])
+                error_messages.append(f"Errore nel campo '{field_path}': {error['msg']}")
+
+                for msg in error_messages:
+                    flash(msg, "error")
+
+                return redirect(url_for("main.import_page"))
         except Exception as e:
             flash(f"Errore imprevisto durante la lettura: {str(e)}", "error")
             return redirect(url_for("main.import_page"))
