@@ -16,6 +16,7 @@ from .models import DeviceConfig
 from .dt import DECISION_TREE
 from .adapters import D3JSNodeAdapter
 from fpdf import FPDF
+from bson.objectid import ObjectId
 
 import json
 import os
@@ -304,7 +305,8 @@ def import_page():
             result = devices_collection.insert_one(device_dict)
             new_device_id = str(result.inserted_id)
 
-            return redirect(f"/{new_device_id}/dt/1/{REQUIREMENTS[0]}")
+            #return redirect(f"/{new_device_id}/dt/1/{REQUIREMENTS[0]}")
+            return redirect(url_for("main.dashboard_page", device_id=new_device_id))
 
         except json.JSONDecodeError:
             flash(
@@ -331,4 +333,44 @@ def import_page():
     elif request.method == "GET":
         return render_template(
             "import.html", title="Importa Configurazione", page_title="Carica File JSON"
+        )
+    
+
+
+@bp.route("/dashboard/<device_id>", methods=["GET", "POST"])
+def dashboard_page(device_id: str):
+    try:
+        device = current_app.db["devices"].find_one({"_id": ObjectId(device_id)})
+    except Exception:
+        flash("ID dispositivo non valido.", "error")
+        return redirect(url_for("main.import_page"))
+
+    if not device:
+        flash("Dispositivo non trovato.", "error")
+        return redirect(url_for("main.import_page"))
+
+    device_status = "Conforme"
+
+    for asset in device["assets"]:
+        asset_status = "Conforme"
+
+        # ciclo che restituisce (chiave, valore)
+        for req_name, nodes in asset["dt"].items():
+            # se i nodi non sono tutti veri (NAND) -> mette che è da valutare
+            if not all(nodes.values()): 
+                asset_status = "Da valutare"
+                device_status = "Da valutare"
+                break
+        # UC16.3.1.3 -> si deve poter vedere lo stato aggregato dell'asset
+        # si aggiunge dopo a mano
+        asset["aggregated_status"] = asset_status
+
+
+
+    return render_template(
+        "dashboard.html",
+        title="Dashboard Dispositivo",
+        page_title="Dashboard",
+        device=device,
+        device_status=device_status
         )
