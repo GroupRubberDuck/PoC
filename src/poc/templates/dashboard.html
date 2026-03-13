@@ -6,8 +6,8 @@
         <div class="dashboard-header">
             <h2>Dettagli dispositivo</h2>
             <div class="header-buttons">
-                <button>Avvia Valutazione</button>
-                <button>Visualizza Report</button>
+                <button class="btn-import">Avvia Valutazione</button>
+                <button class="btn-import">Visualizza Report</button>
             </div>
         </div>
     </div>
@@ -15,13 +15,17 @@
     <div class="device-card">
         <div class="info-grid">
             <div>
-                <h3>Informazioni generali</h3>
+                <h3>INFORMAZIONI GENERALI:</h3>
                 <p><strong>Nome:</strong> {{ device.info.name }}</p>
                 <p><strong>Sistema Operativo:</strong> {{ device.info.os }}</p>
                 <p><strong>Stato Valutazione:</strong> {{ device_status }}</p>
             </div>
             <div>
-                <h3>Contesto normativo</h3>
+                <h3>DESCRIZIONE E FUNZIONALITÀ:</h3>
+                <P><strong>Descrizione:</strong> {{ device.info.description }}</P>
+            </div>
+            <div>
+                <h3>CONTENSTO NORMATIVO:</h3>
                 <p><strong>Versione Standard:</strong> EN 18031-1:2024</p>
             </div>
         </div>
@@ -46,7 +50,7 @@
                 <td>{{ asset.type }}</td>
                 <td>{{ asset.aggregated_status }}</td>
                 <td>
-                    <button>Modifica Albero</button>
+                    <button class="btn-import">Apri Albero</button>
                 </td>
             </tr>
             {% endfor %}

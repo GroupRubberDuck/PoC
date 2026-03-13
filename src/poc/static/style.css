@@ -355,3 +355,113 @@ svg {
 .btn-import:hover {
     opacity: 0.9;
 }
+
+/* --- PAGINA DI DASHBOARD --- */
+/* --- DASHBOARD STYLING (FIGMA MATCH) --- */
+
+.dashboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Header: Titolo a sinistra, Bottoni a destra */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #000;
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+}
+
+.dashboard-header h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+/* Pulsanti Blu del Figma */
+.header-buttons .btn-blue {
+    background-color: #3B7DEE;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 24px;
+    font-weight: 500;
+    margin-left: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.header-buttons .btn-blue:hover {
+    background-color: #2a69d4;
+}
+
+/* La grande Card grigio chiaro */
+.device-card {
+    background-color: #F2F2F2; /* Grigio chiaro come da Figma */
+    border: 1px solid #BDBDBD;
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 40px;
+}
+
+/* Layout a tre blocchi per le info dispositivo */
+.info-section {
+    margin-bottom: 25px;
+}
+
+.info-section h3 {
+    font-size: 0.9rem;
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 10px;
+    border-bottom: none;
+}
+
+.info-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.info-section ul li {
+    margin-bottom: 6px;
+    font-size: 1rem;
+}
+
+/* Tabella Asset */
+.assets-section h3 {
+    margin-bottom: 15px;
+}
+
+.assets-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.assets-table th {
+    background-color: #f8f9fa;
+    text-align: left;
+    padding: 12px 15px;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.assets-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.btn-edit {
+    background: transparent;
+    border: 1px solid #3B7DEE;
+    color: #3B7DEE;
+    padding: 5px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}

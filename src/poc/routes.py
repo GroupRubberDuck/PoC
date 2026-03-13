@@ -16,7 +16,6 @@ from .models import DeviceConfig
 from .dt import DECISION_TREE
 from .adapters import D3JSNodeAdapter
 from fpdf import FPDF
-from bson.objectid import ObjectId
 
 import json
 import os
