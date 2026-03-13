@@ -46,8 +46,17 @@ def _build_report_data(device: DeviceConfig) -> tuple[list[dict], list[str], lis
             columns = list(asset.dt.keys())
             rows = list(next(iter(asset.dt.values())).keys())
             break
+    
+    # Conformità del dispositivo: AND di tutti i valori presenti nel dt di ogni asset
+    compliant: bool = True
+    for asset in device.assets:
+        for col_vals in asset.dt.values():
+            for val in col_vals.values():
+                if not val:
+                    compliant = False
+                    break
  
-    return assets, columns, rows
+    return assets, columns, rows, compliant
 
 
 @bp.route("/<device_id>/report")
@@ -57,7 +66,7 @@ def report(device_id: str) -> Response | str:
         flash("Dispositivo non trovato.", "error")
         return redirect(url_for("main.import_page"))
  
-    assets, columns, rows = _build_report_data(device)
+    assets, columns, rows, compliant = _build_report_data(device)
     return render_template(
         "report.html",
         title=f"Report — {device.info.name}",
@@ -67,6 +76,7 @@ def report(device_id: str) -> Response | str:
         columns=columns,
         rows=rows,
         device_id=device_id,
+        compliant=compliant,
     )
 
 

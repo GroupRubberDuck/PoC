@@ -6,6 +6,12 @@
   {% if info.description %}
   <p class="device-desc">{{ info.description }}</p>
   {% endif %}
+  {% if compliant %}
+  <p>Stato del dispositivo : <span class="compliance-badge compliance-pass">&#10003; Conforme </span></p>
+  {% else %}
+  <p>Stato del dispositivo : <span class="compliance-badge compliance-fail">&#10007; Non Conforme</span></p>
+  {% endif %}
+  </div>
 </header>
 
 <div class="report-actions">

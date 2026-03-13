@@ -243,3 +243,24 @@ svg {
     padding: 0.5em 1.4em;
     border-radius: 5px;
 }
+
+.compliance-badge {
+    display: inline-block;
+    font-size: 0.85em;
+    font-weight: 700;
+    padding: 0.2em 0.75em;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+ 
+.compliance-pass {
+    background-color: var(--val-true-bg);
+    color: var(--val-true-text);
+    border: 1.5px solid var(--val-true-text);
+}
+ 
+.compliance-fail {
+    background-color: var(--val-false-bg);
+    color: var(--val-false-text);
+    border: 1.5px solid var(--val-false-text);
+}
