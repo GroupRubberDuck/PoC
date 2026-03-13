@@ -350,6 +350,8 @@ svg {
     transition: opacity 0.2s;
     position: static; 
     transform: none;
+    text-decoration: none;
+    display: inline-block;
 }
 
 .btn-import:hover {

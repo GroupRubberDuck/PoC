@@ -8,7 +8,7 @@
 <form>
     <select id="asset-select">
         {% for id, asset in assets %}
-        {% if id == selected_asset %}
+        {% if id == selected_asset-1 %}
         <option value="{{ id + 1 }}" selected>{{ asset }}</option>
         {% else %}
         <option value="{{ id + 1 }}">{{ asset }}</option>
@@ -122,10 +122,11 @@
         window.location.replace(`${window.location.href}/updatedt?set=${d.parent.data.name}&value=${isYesChild}`)
     });
 
-    function setup() {
+    document.addEventListener("DOMContentLoaded", function() {
         document.getElementById("asset-select").addEventListener('change', function (event) {
-            window.location.replace(`${window.location.origin}/dt/${event.target.value}/ACM-1`)
+            const deviceId = window.location.href.split('/')[3];
+            window.location.replace(`${window.location.origin}/${deviceId}/dt/${event.target.value}/ACM-1`)
         });
-    }
+    });
 </script>
 {% endblock %}

@@ -6,8 +6,8 @@
         <div class="dashboard-header">
             <h2>Dettagli dispositivo</h2>
             <div class="header-buttons">
-                <button class="btn-import">Avvia Valutazione</button>
-                <button class="btn-import">Visualizza Report</button>
+                <a href="{{ valutation_link }}" class="btn-import">Avvia Valutazione</a>
+                <a href="{{ report_link }}" class="btn-import">Visualizza Report</a>
             </div>
         </div>
     </div>
@@ -50,7 +50,7 @@
                 <td>{{ asset.type }}</td>
                 <td>{{ asset.aggregated_status }}</td>
                 <td>
-                    <button class="btn-import">Apri Albero</button>
+                    <a href="{{ asset.dt_link }}" class="btn-import">Apri Albero</a>
                 </td>
             </tr>
             {% endfor %}

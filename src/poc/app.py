@@ -8,6 +8,7 @@ from .routes import bp
 
 load_dotenv()
 
+
 def create_app() -> Flask:
     app = Flask(__name__)
     app.secret_key = "".join(random.choices(string.ascii_letters + string.digits, k=32))
