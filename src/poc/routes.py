@@ -263,30 +263,38 @@ def update_decision_tree(device_id: str, asset_id: int, requirement: str) -> Res
     return redirect(f"/{device_id}/dt/{asset_id}/{requirement}")
 
 
+
+# Logica della pagina di import
 @bp.route("/", methods=["GET", "POST"])
 def import_page():
     if request.method == "POST":
+        # controlla se il caricamento è avvenuto con successo
         if "file_json" not in request.files:
             flash("Nessun file inviato al form.", "error")
             return redirect(url_for("main.import_page"))
 
         uploaded_file = request.files["file_json"]
         filename = uploaded_file.filename
+        # controlla che sia stato selezionato un file
         if filename == "":
             flash("Nessun file selezionato.", "error")
             return redirect(url_for("main.import_page"))
 
         file_ext = os.path.splitext(filename)[1].lower()
+        # Controllo estensione
         if file_ext != ".json":
             flash("Il file deve avere estensione .json", "error")
             return redirect(url_for("main.import_page"))
 
+        # controllo lunghezza
         if request.content_length > (1024 * 1024):
             flash("Il file supera la dimensione massima consentita di 1 MB.", "error")
             return redirect(url_for("main.import_page"))
 
         try:
             raw_data = json.load(uploaded_file)
+            
+            # controllo del formato da models
             validated_device = DeviceConfig.model_validate(raw_data)
             device_dict = validated_device.model_dump()
             device_dict["status"] = "Imported"
@@ -296,7 +304,6 @@ def import_page():
             result = devices_collection.insert_one(device_dict)
             new_device_id = str(result.inserted_id)
 
-            flash("Configurazione importata e validata con successo!", "success")
             return redirect(f"/{new_device_id}/dt/1/{REQUIREMENTS[0]}")
 
         except json.JSONDecodeError:

@@ -3,8 +3,10 @@ import string
 import random
 from flask import Flask
 from pymongo import MongoClient
+from dotenv import load_dotenv
 from .routes import bp
 
+load_dotenv()
 
 def create_app() -> Flask:
     app = Flask(__name__)
