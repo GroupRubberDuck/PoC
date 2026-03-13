@@ -7,11 +7,11 @@
 {% block content %}
 <form>
     <select id="asset-select">
-        {% for id, asset in assets.items() %}
+        {% for id, asset in assets %}
         {% if id == selected_asset %}
-        <option value="{{ id }}" selected>{{ asset }}</option>
+        <option value="{{ id + 1 }}" selected>{{ asset }}</option>
         {% else %}
-        <option value="{{ id }}">{{ asset }}</option>
+        <option value="{{ id + 1 }}">{{ asset }}</option>
         {% endif %}
         {% endfor %}
     </select>

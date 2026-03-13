@@ -3,6 +3,11 @@
 
 ## Sviluppo
 ```bash
+# Impostare le variabili di ambiente per la connessione al database:
+# - DB_HOST
+# - DB_PORT
+# - DB_USER
+# - DB_PASSWORD
 poetry install
 poetry run flask --app src.poc.app:create_app run --debug
 ```
