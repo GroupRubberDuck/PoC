@@ -22,8 +22,7 @@ poetry run strictdoc export .
 
 ## Deploy
 ```bash
-docker build -t grouprubberduck/poc .
-docker run --rm -d -p 8080:8080 grouprubberduck/poc
+docker compose up --build -d
 ```
 
 ### Documentazione
