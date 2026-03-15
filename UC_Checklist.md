@@ -1,0 +1,67 @@
+// estensione Markdown All in One per vedere la preview ( ctrl + shift + v per attivarla)
+// alt + c su una riga per fare check
+# Stato Implementazione UC
+
+- [ ] **UC01**: Visualizza lista dispositivi
+  - [ ] **UC01.1**: Visualizza elemento lista dispositivi
+    - [ ] **UC01.1.1**: Visualizza nome dispositivo su lista dispositivi
+- [ ] **UC02**: Inserimento nuovo dispositivo
+- [ ] **UC03**: Annullamento inserimento dispositivo
+- [ ] **UC04**: Crea nuovo dispositivo
+  - [ ] **UC04.1**:Inserimento nome dispositivo
+    - [ ] **UC04.1.1**:Errore nome dispositivo non valido
+  - [ ] **UC04.2**: Inserimento sistema operativo dispositivo
+  - [ ] **UC04.3**: Inserimento descrizione dispositivo
+- [ ] **UC05**: Importa dispositivo
+  - [ ] **UC05.1**: Selezione file sorgente
+    - [x] **UC05.1.1**: Selezione file JSON
+    - [ ] **UC05.1.2**: Selezione file XML
+    - [ ] **UC05.1.3**: Selezione file CSV
+- [x] **UC06**: Errore file dispositivo non valido (Implementato)
+- [ ] **UC07**: Visualizza dati dispositivo
+  - [x] **UC07.1**: Visualizza nome dispositivo
+  - [x] **UC07.2**: Visualizza sistema operativo dispositivo
+  - [x] **UC07.3**: Visualizza descrizione dispositivo
+  - [ ] **UC07.4**:Visualizza modello associato al dispositivo
+    - [ ] **UC07.4.1**:Visualizza nome modello associato
+    - [ ] **UC07.4.2**: Visualizza versione modello associato
+- [ ] **UC08**: Modifica dispositivo
+  - [ ] **UC08.1**: Modifica nome dispositivo
+    - [ ] **UC08.1.1**: Errore modifica nome dispositivo non valido
+  - [ ] **UC08.2**: Modifica sistema operativo dispositivo
+  - [ ] **UC08.3**: Modifica descrizione dispositivo
+  - [ ] **UC08.4**: Annulla modifiche dispositivo
+- [ ] **UC09**: Elimina dispositivo
+  - [ ] **UC09.1**: Elimina dispositivo direttamente
+  - [ ] **UC09.2**: Elimina dispositivo con back up
+    - [ ] **UC09.2.1**: Elimina dispositivo con back up JSON
+    - [ ] **UC09.2.2**: Elimina dispositivo con back up XML
+    - [ ] **UC09.2.3**: Elimina dispositivo con back up CSV
+- [x] **UC10**: Avvia valutazione dispositivo
+- [ ] **UC11**: Scarta modifiche valutazione
+- [ ] **UC12**: Salva valutazione
+  - [ ] **UC12.1:**Salva e chiudi valutazione dispositivo
+  - [ ] **UC12.2**:Salva e continua valutazione dispositivo
+- [ ] **UC13**:Errore salvataggio valutazione
+- [x] **UC16**: Visualizza dashboard dispositivo
+    - [x] **UC16.1**: Visualizza dati dispositivo su dashboard
+      - [x] **UC16.1.1**: Visualizza nome dispositivo su dashboard
+      - [x] **UC16.1.2**: Visualizza sistema operativo dispositivo su dashboard
+      - [x] **UC16.1.3**: Visualizza descrizione dispositivo su dashboard
+    - [x] **UC16.2**: Visualizza stato aggregato dispositivo
+    - [ ] **UC16.3**: Visualizza lista asset
+      - [ ] **UC16.3.1**: Visualizza singolo elemento lista asset
+        - [x] **UC17.1**: Visualizza nome asset
+        - [x] **UC17.2**: Visualizza tipo asset
+        - [x] **UC17.3**: Visualizza stato aggregato asset
+        - [ ] **UC17.4**: Visualizza descrizione asset
+        - [ ] **UC17.5**: Visualizza lista requisiti asset
+          - [ ] **UC17.5.1**: Visualizza elemento lista requisiti asset
+            - [ ] **UC17.5.1.1**: Visualizza codice requisito da lista requisiti
+            - [ ] **UC17.5.1.2**: Visualizza stato valutazione requisito da lista requisiti
+- [ ] **UC21**: Esporta informazioni dispositivo
+  - [ ] **UC21.1**:Esporta in XML
+  - [ ] **UC21.2**:Esporta in JSON 
+  - [ ] **UC21.3**:Esporta in CSV
+- [x] **UC28**:Esporta report di conformità
+  - [x] **UC28.1**: Esporta report in pdf
