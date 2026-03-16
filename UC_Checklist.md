@@ -40,9 +40,17 @@
 - [x] **UC10**: Avvia valutazione dispositivo
 - [ ] **UC11**: Scarta modifiche valutazione
 - [ ] **UC12**: Salva valutazione
-  - [ ] **UC12.1:**Salva e chiudi valutazione dispositivo
-  - [ ] **UC12.2**:Salva e continua valutazione dispositivo
-- [ ] **UC13**:Errore salvataggio valutazione
+  - [ ] **UC12.1**: Salva e chiudi valutazione dispositivo
+  - [ ] **UC12.2**: Salva e continua valutazione dispositivo
+- [ ] **UC13**: Errore salvataggio valutazione
+- [ ] **UC14**: Aggiunta asset
+  - [ ] **UC14.1**: Inserisci nome asset
+    - [ ] **UC14.1.1**: Errore nome asset non valido
+  - [ ] **UC14.2**: Seleziona tipo asset
+    - [ ] **UC14.2.1**: Seleziona security asset
+    - [ ] **UC14.2.2**: Seleziona network asset
+  - [ ] **UC14.3**: Inserisci descrizione asset
+- [ ] **UC15**: Annulla aggiunta asset
 - [x] **UC16**: Visualizza dashboard dispositivo
     - [x] **UC16.1**: Visualizza dati dispositivo su dashboard
       - [x] **UC16.1.1**: Visualizza nome dispositivo su dashboard
@@ -59,9 +67,153 @@
           - [ ] **UC17.5.1**: Visualizza elemento lista requisiti asset
             - [ ] **UC17.5.1.1**: Visualizza codice requisito da lista requisiti
             - [ ] **UC17.5.1.2**: Visualizza stato valutazione requisito da lista requisiti
+- [ ] **UC18**: Elimina asset
+- [ ] **UC19**: Modifica asset
+  - [ ] **UC19.1**: Modifica nome asset
+    - [ ] **UC19.1.1**: Errore modifica nome asset non valido
+  - [ ] **UC19.2**: Modifica tipo asset
+    - [ ] **UC19.2.1**: Seleziona nuovo tipo security asset
+    - [ ] **UC19.2.2**: Seleziona nuovo tipo network asset
+  - [ ] **UC19.3**: Modifica descrizione asset  
+- [ ] **UC20**: Annulla modifica asset
 - [ ] **UC21**: Esporta informazioni dispositivo
   - [ ] **UC21.1**:Esporta in XML
   - [ ] **UC21.2**:Esporta in JSON 
   - [ ] **UC21.3**:Esporta in CSV
+- [ ] **UC22**: Visualizza dettaglio requisito
+  - [ ] **UC22.1**: Visualizza codice requisito
+  - [ ] **UC22.2**: Visualizza nome del requisito
+  - [ ] **UC22.3**: Visualizza descrizione normativa
+  - [ ] **UC22.4**: Visualizza stato valutazione requisito
+    - [ ] **UC22.4.1**: Visualizza stato pass requisito
+    - [ ] **UC22.4.2**: Visualizza stato fail requisito
+    - [ ] **UC22.4.3**: Visualizza stato na requisito
+    - [ ] **UC22.4.4**: Visualizza stato in corso requisito
+    - [ ] **UC22.4.5**: Visualizza stato sospeso requisito
+  - [ ] **UC22.5**: Visualizza lista dipendenze requisito
+    - [ ] **UC22.5.1**: Visualizza sintesi dipendenza
+      - [ ] **UC22.5.1.1**: Visualizza codice dipendenza
+    - [ ] **UC22.5.1.2**: Visualizza stato dipendenza
+  - [ ] **UC22.6**: Visualizza decision tree
+    - [x] **UC22.6.1**: Visualizza nodo decision tree
+      - [x] **UC22.6.1.1**: Visualizza stato attività
+    - [ ] **UC22.6.2**: Visualizza nodo di decisione
+      - [x] **UC22.6.2.1**: Visualizza codice requisito DT
+      - [x] **UC22.6.2.2**: Visualizza codice nodo
+      - [x] **UC22.6.2.3**: Visualizza domanda nodo
+      - [x] **UC22.6.2.4**: Visualizza risposta nodo
+        - [ ] **UC22.6.2.4.1**: Nessuna risposta associata
+    - [x] **UC22.6.3**: Visualizza nodo foglia
+      - [x] **UC22.6.3.1**: Visualizza valore nodo foglia
+  - [ ] **UC22.7**: Visualizza giustificazione decision tree
+- [ ] **UC23**: Visualizza dettaglio nodo decisionale
+  - [x] **UC23.1**: Visualizza codice requisito a dettaglio
+  - [x] **UC23.2**: Visualizza codice nodo a dettaglio
+  - [x] **UC23.3**: Visualizza domanda nodo a dettaglio
+  - [x] **UC23.4**: Visualizza risposta nodo a dettaglio
+    - [ ] **UC23.4.1**: Mostra assenza di risposta a dettaglio
+- [ ] **UC24**: Valuta nodo di decisione
+  - [x] **UC24.1**: Inserisci risposta nodo decision tree
+    - [x] **UC24.1.1**: Seleziona yes
+    - [x] **UC24.1.2**: Seleziona no
+- [ ] **UC25**: Vai al nodo successivo
+  - [ ] **UC25.1**: Nodo senza risposta selezionata
+  - [ ] **UC25.2**: Nodo successore foglia
+- [ ] **UC26**: Vai al nodo precedente
+  - [ ] **UC26.1**: Nodo corrente root
+- [ ] **UC27**: Inserisci giustificazione decision tree
 - [x] **UC28**:Esporta report di conformità
   - [x] **UC28.1**: Esporta report in pdf
+- [ ] **UC29**: Visualizza lista modelli
+  - [ ] **UC29.1**: Visualizza elemento lista modelli
+    - [ ] **UC29.1.1**: Visualizza nome modello da lista modelli
+    - [ ] **UC29.1.2**: Visualizza versione modello da lista modelli
+- [ ] **UC30**: Visualizza dettaglio modello
+  - [ ] **UC30.1**: Visualizza id modello
+  - [ ] **UC30.2**: Visualizza nome modello
+  - [ ] **UC30.3**: Visualizza versione modello
+  - [ ] **UC30.4**: Visualizza lista requisiti modello
+    - [ ] **UC30.4.1**: Visualizza singolo elemento lista requisiti modello
+      - [ ] **UC30.4.1.1**: Visualizza codice requisito da lista requisiti modello
+      - [ ] **UC30.4.1.2**: Visualizza nome requisito da lista requisiti modello
+- [ ] **UC31**: Inserisci nuovo modello
+  - [ ] **UC31.1**: Crea nuovo modello
+    - [ ] **UC31.1.1**: Inserisci nome modello
+      - [ ] **UC31.1.1.1**: Errore nome nuovo modello non valido
+  - [ ] **UC31.2**: Importa nuovo modello
+    - [ ] **UC31.2.1**: Errore modello esistente
+  - [ ] **UC31.3**: Importa modello file XML
+  - [ ] **UC31.4**: Importa modello file JSON
+- [ ] **UC32**: Annulla inserimento modello
+- [ ] **UC33**: Modifica anagrafica modello
+  - [ ] **UC33.1**: Modifica nome modello
+    - [ ] **UC33.1.1**: Errore modifica nome modello
+- [ ] **UC34**: Avvia modifica modello
+- [ ] **UC35**: Salva modifica modello
+  - [ ] **UC35.1**: Errore struttura non valida per il salvataggio
+- [ ] **UC36**: Scarta modifica modello
+- [ ] **UC37**: Elimina modello
+- [ ] **UC38**: Visualizza dettaglio requisito modello
+  - [ ] **UC38.1**: Visualizza anagrafica requisito modello
+    - [ ] **UC38.1.1**: Visualizza codice requisito modello
+    - [ ] **UC38.1.2**: Visualizza nome del requisito modello
+    - [ ] **UC38.1.3**: Visualizza descrizione modello
+  - [ ] **UC38.2**: Visualizza lista dipendenze
+    - [ ] **UC38.2.1**: Visualizza codice dipendenze
+  - [ ] **UC38.3**: Visualizza lista non dipendenze
+    - [ ] **UC38.3.1**: Visualizza codice non dipendenze
+  - [ ] **UC38.4**: Visualizza decision tree requisito modello
+    - [ ] **UC38.4.1**: Visualizza nodo decision tree modello
+      - [ ] **UC38.4.1.1**: Visualizza nodo decisione modello
+        - [ ] **UC38.4.1.1.1**: Visualizza codice requisito padre modello
+        - [ ] **UC38.4.1.1.2**: Visualizza codice nodo modello
+- [ ] **UC39**: Visualizza dettaglio nodo modello decision tree
+  - [ ] **UC39.1**: Visualizza dettaglio nodo decisione modello
+    - [ ] **UC39.1.1**: Visualizza dettaglio codice requisito padre modello
+    - [ ] **UC39.1.2**: Visualizza dettaglio codice nodo modello
+    - [ ] **UC39.1.3**: Visualizza dettaglio domanda nodo modello
+  - [ ] **UC39.2**: Visualizza dettaglio nodo foglia modello
+- [ ] **UC40**: Aggiungi requisito
+  - [ ] **UC40.1**: Inserisci codice requisito
+    - [ ] **UC40.1.1**: Errore codice requisito lunghezza non valida
+    - [ ] **UC40.1.2**: Errore codice requisito duplicato
+  - [ ] **UC40.2**: Inserisci nome requisito
+    - [ ] **UC40.2.1**: Errore nome requisito non valido
+  - [ ] **UC40.3**: Inserisci descrizione requisito
+- [ ] **UC41**: Elimina requisito
+- [ ] **UC42**: Modifica anagrafica requisito
+  - [ ] **UC42.1**: Modifica codice requisito
+    - [ ] **UC42.1.1**: Errore modifica codice requisito lunghezza non valida
+    - [ ] **UC42.1.2**: Errore modifica codice requisito duplicato
+  - [ ] **UC42.2**: Modifica nome requisito
+    - [ ] **UC42.2.1**: Errore modifica nome requisito non valido
+  - [ ] **UC42.3**: Modifica descrizione requisito
+- [ ] **UC43**: Aggiungi dipendenza
+  - [ ] **UC43.1**: Errore dipendenza circolare
+    - [ ] **UC43.1.1**: Visualizza grafo dipendenze
+- [ ] **UC44**: Rimuovi dipendenza
+- [ ] **UC45**: Aggiungi nodo figlio
+  - [ ] **UC45.1**: Aggiungi nodo figlio sinistro
+  - [ ] **UC45.2**: Aggiungi nodo figlio destro
+- [ ] **UC46**: Aggiungi nodo
+  - [ ] **UC46.1**: Aggiungi nodo foglia
+    - [ ] **UC46.1.1**: Aggiungi nodo PASS
+    - [ ] **UC46.1.2**: Aggiungi nodo FAIL
+    - [ ] **UC46.1.3**: Aggiungi nodo NA
+  - [ ] **UC46.2**: Aggiungi nodo di decisione
+    - [ ] **UC46.2.1**: Inserisci codice nodo decision tree
+      - [ ] **UC46.2.1.1**: Errore codice nodo non valido
+      - [ ] **UC46.2.1.2**: Errore codice nodo già esistente
+    - [ ] **UC46.2.2**: Inserisci domanda nodo decision tree
+      - [ ] **UC46.2.2.1**: Errore domanda vuota
+- [ ] **UC47**: Modifica nodo
+  - [ ] **UC47.1**: Modifica codice nodo decision tree
+    - [ ] **UC47.1.1**: Errore modifica codice nodo non valido
+    - [ ] **UC47.1.2**: Errore modifica codice nodo già esistente
+  - [ ] **UC47.2**: Modifica domanda nodo decision tree
+    - [ ] **UC47.2.1**: Errore modifica domanda vuota
+- [ ] **UC48**: Rimuovi nodo
+- [ ] **UC49**: Errore nodo root
+- [ ] **UC50**: Esporta modello
+  - [ ] **UC50.1**: Esporta modello in XML
+  - [ ] **UC50.2**: Esporta modello in JSON
