@@ -59,7 +59,7 @@ def _build_report_data(
     for asset in device.assets:
         for col_vals in asset.dt.values():
             for val in col_vals.values():
-                if not val:
+                if val is False:
                     compliant = False
                     break
 
