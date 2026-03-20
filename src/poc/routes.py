@@ -89,6 +89,10 @@ def report(device_id: str) -> Response | str:
 
 @bp.route("/<device_id>/report/export")
 def report_export(device_id: str) -> Response:
+    """
+    @relation(UC28, scope=function)
+    @relation(UC28.1, scope=function)
+    """
     device = _get_device(device_id)
     if device is None:
         flash("Dispositivo non trovato.", "error")
@@ -183,6 +187,23 @@ def report_export(device_id: str) -> Response:
 
 @bp.route("/<device_id>/dt/<int:asset_id>/<requirement>")
 def decision_tree(device_id: str, asset_id: int, requirement: str) -> Response | str:
+    """
+    @relation(UC22.6.1, scope=function)
+    @relation(UC22.6.1.1, scope=function)
+    @relation(UC22.6.2.1, scope=function)
+    @relation(UC22.6.2.2, scope=function)
+    @relation(UC22.6.2.3, scope=function)
+    @relation(UC22.6.2.4, scope=function)
+    @relation(UC22.6.3, scope=function)
+    @relation(UC22.6.3.1, scope=function)
+    @relation(UC23.1, scope=function)
+    @relation(UC23.2, scope=function)
+    @relation(UC23.3, scope=function)
+    @relation(UC23.4, scope=function)
+    @relation(UC24.1, scope=function)
+    @relation(UC24.1.1, scope=function)
+    @relation(UC24.1.2, scope=function)
+    """
     devices_collection = current_app.db["devices"]
     device_dict = devices_collection.find_one({"_id": ObjectId(device_id)})
 
@@ -274,6 +295,10 @@ def update_decision_tree(device_id: str, asset_id: int, requirement: str) -> Res
 # Logica della pagina di import
 @bp.route("/", methods=["GET", "POST"])
 def import_page():
+    """
+    @relation(UC05.1.1, scope=function)
+    @relation(UC06, scope=function)
+    """
     if request.method == "POST":
         # controlla se il caricamento è avvenuto con successo
         if "file_json" not in request.files:
@@ -344,6 +369,18 @@ def import_page():
 
 @bp.route("/dashboard/<device_id>", methods=["GET", "POST"])
 def dashboard_page(device_id: str):
+    """
+    @relation(UC10, scope=function)
+    @relation(UC16, scope=function)
+    @relation(UC16.1, scope=function)
+    @relation(UC16.1.1, scope=function)
+    @relation(UC16.1.2, scope=function)
+    @relation(UC16.1.3, scope=function)
+    @relation(UC16.2, scope=function)
+    @relation(UC17.1, scope=function)
+    @relation(UC17.2, scope=function)
+    @relation(UC17.3, scope=function)
+    """
     try:
         device = current_app.db["devices"].find_one({"_id": ObjectId(device_id)})
     except Exception:
