@@ -1,13 +1,20 @@
 # PoC
 
+Per avviare l'applicazione è sufficiente aver docker e docker compose installati ed eseguire:
+```bash
+docker compose up --build -d
+```
+L'applicazione sarà quindi accessibile attraverso il browser all'indirizzo [http://localhost:8080](http://localhost:8080).
 
 ## Sviluppo
+Per lo sviluppo è necessario avere un'istanza di MongoDB installata e in esecuzione, ed aver impostato le seguenti variabili di ambiente per permettere all'applicazione di collegarsi al database:
+- `DB_HOST`
+- `DB_PORT`
+- `DB_USER`
+- `DB_PASSWORD`
+
+Per avviare il server in modalità debug eseguire:
 ```bash
-# Impostare le variabili di ambiente per la connessione al database:
-# - DB_HOST
-# - DB_PORT
-# - DB_USER
-# - DB_PASSWORD
 poetry install
 poetry run flask --app src.poc.app:create_app run --debug
 ```
@@ -18,11 +25,6 @@ poetry run mypy .
 poetry run ruff check .
 poetry run pytest
 poetry run strictdoc export .
-```
-
-## Deploy
-```bash
-docker compose up --build -d
 ```
 
 ### Documentazione
