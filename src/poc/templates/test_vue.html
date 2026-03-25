@@ -1,0 +1,14 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Pagina di Test Infrastruttura Vue</h1>
+    <p>Se vedi il box giallo qui sotto, il ponte Docker-Vite-Flask è operativo.</p>
+    
+    <div id="vue-test"></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script type="module" src="{{ url_for('static', filename='vue-assets/test-integration.js') }}"></script>
+{% endblock %}

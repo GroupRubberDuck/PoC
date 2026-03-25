@@ -417,3 +417,8 @@ def dashboard_page(device_id: str):
         valutation_link=f"/{device_id}/dt/1/{REQUIREMENTS[0]}",
         report_link=f"/{device_id}/report",
     )
+
+
+@bp.route('/test-vue')
+def test_vue():
+    return render_template('test_vue.html')
