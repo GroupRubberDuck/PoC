@@ -1,21 +1,28 @@
 {% extends "layouts/base.html" %}
 
+{% block head %}
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+{% endblock %}
+
 {% block content %}
-<div class="import-container">
+<div id="app" class="import-container">
 
     <p class="import-instruction">Per iniziare importa il documento del dispositivo in formato JSON</p>
 
     <form method="POST" enctype="multipart/form-data" class="import-form">
 
         <div class="file-drop-area">
-            <input type="file" id="file_json" name="file_json" accept=".json, application/json" required>
+            <input type="file" id="file_json" name="file_json" accept=".json, application/json" required @change="gestisciSelezione">
             <label for="file_json" class="file-label">
-               <span id="file-name-display">Trascina o seleziona il documento</span>
+
+               <span>[[ nomeFile ]]</span>
+
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                     <polyline points="17 8 12 3 7 8"></polyline>
                     <line x1="12" y1="3" x2="12" y2="15"></line>
                 </svg>
+
             </label>
         </div>
 
@@ -40,5 +47,32 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="{{ url_for('static', filename='import.js') }}"></script>
+<script>
+    const { createApp, ref } = Vue;
+
+    createApp({
+        compilerOptions: {
+            delimiters: ['[[', ']]']
+        },
+
+        setup() {
+            const nomeFile = ref("Trascina o seleziona il documento");
+
+            const gestisciSelezione = (evento) => {
+                // evento.target.files è un array nativo del browser che contiene i file scelti
+                const fileSelezionato = evento.target.files[0];
+                
+                if (fileSelezionato) {
+                    // Se c'è un file, aggiorniamo il testo reattivo col nome del file
+                    nomeFile.value = fileSelezionato.name;
+                } else {
+                    // Se l'utente annulla, torniamo al testo di base
+                    nomeFile.value = "Trascina o seleziona il documento";
+                }
+            };
+
+            return { nomeFile, gestisciSelezione }
+        }
+    }).mount('#app');
+</script>
 {% endblock %}

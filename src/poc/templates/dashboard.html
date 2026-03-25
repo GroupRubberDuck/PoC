@@ -1,62 +1,85 @@
 {% extends "layouts/base.html" %}
 
+{% block head %}
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+{% endblock %}
+
 {% block content %}
-<div class="dashboard-container">
-    <div>
-        <div class="dashboard-header">
-            <h2>Dettagli dispositivo</h2>
-            <div class="header-buttons">
-                <a href="{{ valutation_link }}" class="btn-import">Avvia Valutazione</a>
-                <a href="{{ report_link }}" class="btn-import">Visualizza Report</a>
+<div id="app">
+    <div class="dashboard-container">
+        <div>
+            <div class="dashboard-header">
+                <h2>Dettagli dispositivo</h2>
+                <div class="header-buttons">
+                    <a href="{{ valutation_link }}" class="btn-import">Avvia Valutazione</a>
+                    <a href="{{ report_link }}" class="btn-import">Visualizza Report</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="device-card">
+            <div class="info-grid">
+                <div>
+                    <h3>INFORMAZIONI GENERALI:</h3>
+                    <p><strong>Nome:</strong> {{ device.info.name }}</p>
+                    <p><strong>Sistema Operativo:</strong> {{ device.info.os }}</p>
+                    <p><strong>Stato Valutazione:</strong> {{ device_status }}</p>
+                </div>
+                <div>
+                    <h3>DESCRIZIONE E FUNZIONALITÀ:</h3>
+                    <P><strong>Descrizione:</strong> {{ device.info.description }}</P>
+                </div>
+                <div>
+                    <h3>CONTENSTO NORMATIVO:</h3>
+                    <p><strong>Versione Standard:</strong> EN 18031-1:2024</p>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="device-card">
-        <div class="info-grid">
-            <div>
-                <h3>INFORMAZIONI GENERALI:</h3>
-                <p><strong>Nome:</strong> {{ device.info.name }}</p>
-                <p><strong>Sistema Operativo:</strong> {{ device.info.os }}</p>
-                <p><strong>Stato Valutazione:</strong> {{ device_status }}</p>
-            </div>
-            <div>
-                <h3>DESCRIZIONE E FUNZIONALITÀ:</h3>
-                <P><strong>Descrizione:</strong> {{ device.info.description }}</P>
-            </div>
-            <div>
-                <h3>CONTENSTO NORMATIVO:</h3>
-                <p><strong>Versione Standard:</strong> EN 18031-1:2024</p>
-            </div>
-        </div>
+    <div class="assets-section">
+        <h3>Lista Asset Associati</h3>
+        <table class="assets-table">
+            <thead>
+                <tr>
+                    <th>Nome Asset</th>
+                    <th>Tipo</th>
+                    <th>Stato Aggregato</th>
+                    <th>Azione</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(asset, index) in listaAssets" :key="index">
+                    <td>[[ asset.name ]]</td>
+                    <td>[[ asset.type ]]</td>
+                    <td>[[ asset.aggregated_status ]]</td>
+                    <td>
+                        <a :href="asset.dt_link" class="btn-import">Apri Albero</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
-</div>
-
-<div class="assets-section">
-    <h3>Lista Asset Associati</h3>
-    <table class="assets-table">
-        <thead>
-            <tr>
-                <th>Nome Asset</th>
-                <th>Tipo</th>
-                <th>Stato Aggregato</th>
-                <th>Azione</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for asset in device.assets %}
-            <tr>
-                <td>{{ asset.name }}</td>
-                <td>{{ asset.type }}</td>
-                <td>{{ asset.aggregated_status }}</td>
-                <td>
-                    <a href="{{ asset.dt_link }}" class="btn-import">Apri Albero</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
 
 </div>
+
+{% endblock %}
+
+{% block scripts %}
+<script id="device-assets" type="application/json">
+  {{ device.assets | tojson }}
+</script>
+
+<script>
+const { createApp, ref } = Vue;
+
+createApp({
+  compilerOptions: { delimiters: ['[[', ']]'] },
+  setup() {
+    const payload = JSON.parse(document.getElementById('device-assets').textContent);
+    const listaAssets = ref(payload);
+    return { listaAssets };
+  }
+}).mount('#app');
+</script>
 {% endblock %}
