@@ -2,22 +2,22 @@
 
 {% block head %}
 <script src="{{ url_for('static', filename='d3.v7.min.js') }}"></script>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 {% endblock %}
 
 {% block content %}
-<form>
-    <select id="asset-select">
-        {% for id, asset in assets %}
-        {% if id == selected_asset-1 %}
-        <option value="{{ id + 1 }}" selected>{{ asset }}</option>
-        {% else %}
-        <option value="{{ id + 1 }}">{{ asset }}</option>
-        {% endif %}
-        {% endfor %}
-    </select>
-</form>
+<div id="app">
+    <form>
+        <select id="asset-select" v-model="assetSelezionato" @change="cambiaAsset">
+            {% for id, asset in assets %}
+            <option value="{{ id + 1 }}">{{ asset }}</option>
+            {% endfor %}
+        </select>
+    </form>
+</div>
 
 <p class="text-hint">E' possibile modificare le risposte del decision tree cliccando su un nodo.</p>
+
 <div id="tree-container">
     <svg id="tree-svg"></svg>
 </div>
@@ -123,11 +123,23 @@
         window.location.replace(`${window.location.href}/updatedt?set=${d.parent.data.name}&value=${isYesChild}`)
     });
 
-    document.addEventListener("DOMContentLoaded", function() {
-        document.getElementById("asset-select").addEventListener('change', function (event) {
-            const deviceId = window.location.href.split('/')[3];
-            window.location.replace(`${window.location.origin}/${deviceId}/dt/${event.target.value}/ACM-1`)
-        });
-    });
+    const { createApp, ref } = Vue;
+
+    createApp({
+        setup() {
+            // Inizializziamo il v-model con l'asset attualmente visualizzato.
+            // Jinja stamperà il numero corretto prima di inviare la pagina.
+            const assetSelezionato = ref('{{ selected_asset }}');
+
+            // Questa funzione scatta col @change della select
+            const cambiaAsset = () => {
+                const deviceId = window.location.href.split('/')[3];
+                // Usiamo il valore reattivo di Vue (assetSelezionato.value) per comporre il nuovo URL
+                window.location.replace(`${window.location.origin}/${deviceId}/dt/${assetSelezionato.value}/ACM-1`);
+            };
+
+            return { assetSelezionato, cambiaAsset }
+        }
+    }).mount('#app');
 </script>
 {% endblock %}

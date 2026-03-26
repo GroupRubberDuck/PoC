@@ -1,5 +1,10 @@
 {% extends "layouts/base.html" %}
 
+
+{% block head %}
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+{% endblock %}
+
 {% block content %}
 <header>
   <p>Asset Security &amp; Network Overview -- {{ info.os }}</p>
@@ -11,7 +16,6 @@
   {% else %}
   <p>Stato del dispositivo : <span class="compliance-badge compliance-fail">&#10007; Non Conforme</span></p>
   {% endif %}
-  </div>
 </header>
 
 <div class="report-actions">
@@ -20,44 +24,73 @@
   </a>
 </div>
 
-<div class="grid">
-  {% for asset in assets %}
-  <div class="card">
-    <div class="card-header">
-      <span class="asset-type">{{ asset.type }}</span>
-      <div class="asset-name">{{ asset.name }}</div>
-      <div class="asset-desc">{{ asset.description }}</div>
+<div id="app">
+  <div class="grid">
+    <div class="card" v-for="(asset, index) in listaAssets" :key="index">
+      <div class="card-header">
+        <span class="asset-type">[[ asset.type ]]</span>
+        <div class="asset-name">[[ asset.name ]]</div>
+        <div class="asset-desc">[[ asset.description ]]</div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>DN / ACM</th>
+            <th v-for="col in listaColumns" :key="col">[[ col ]]</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="row in listaRows" :key="row">
+            <td>[[ row ]]</td>
+
+            <td v-for="col in listaColumns" :key="col" :class="getClasseCella(asset, col, row)">
+              [[ getTestoCella(asset, col, row) ]]
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-    <table>
-      <thead>
-        <tr>
-          <th>DN / ACM</th>
-          {% for col in columns %}
-          <th>{{ col }}</th>
-          {% endfor %}
-        </tr>
-      </thead>
-      <tbody>
-        {% for row in rows %}
-        <tr>
-          <td>{{ row }}</td>
-          {% for col in columns %}
-            {% if col in asset.dt and row in asset.dt[col] %}
-              {% set val = asset.dt[col][row] %}
-              {% if val == true %}
-                <td class="val-true">&#10003; True</td>
-              {% else %}
-                <td class="val-true">&#10007; False</td>
-              {% endif %}
-            {% else %}
-              <td class="val-na">N.A.</td>
-            {% endif %}
-          {% endfor %}
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
   </div>
-  {% endfor %}
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script id="data-assets" type="application/json">{{ assets | tojson }}</script>
+<script id="data-columns" type="application/json">{{ columns | tojson }}</script>
+<script id="data-rows" type="application/json">{{ rows | tojson }}</script>
+
+<script>
+  const { createApp, ref } = Vue;
+
+  createApp({
+    compilerOptions: { delimiters: ['[[', ']]'] },
+
+    setup() {
+      // 2. Parsiamo i dati grezzi e li rendiamo reattivi
+      const listaAssets = ref(JSON.parse(document.getElementById('data-assets').textContent));
+      const listaColumns = ref(JSON.parse(document.getElementById('data-columns').textContent));
+      const listaRows = ref(JSON.parse(document.getElementById('data-rows').textContent));
+
+      // 3. Metodo per calcolare il testo della cella (True, False, N.A.)
+      const getTestoCella = (asset, col, row) => {
+        // Equivalente JS di: if col in asset.dt and row in asset.dt[col]
+        if (asset.dt[col] && asset.dt[col][row] !== undefined) {
+          const valore = asset.dt[col][row];
+          return valore === true ? '✓ True' : '✗ False';
+        }
+        return 'N.A.';
+      };
+
+      // 4. Metodo per assegnare la classe CSS corretta alla cella
+      const getClasseCella = (asset, col, row) => {
+        if (asset.dt[col] && asset.dt[col][row] !== undefined) {
+          return asset.dt[col][row] === true ? 'val-true' : 'val-false'; // Assicurati di avere .val-false nel CSS!
+        }
+        return 'val-na';
+      };
+
+      return { listaAssets, listaColumns, listaRows, getTestoCella, getClasseCella }
+    }
+  }).mount('#app');
+</script>
 {% endblock %}
