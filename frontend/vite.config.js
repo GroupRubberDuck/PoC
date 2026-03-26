@@ -10,7 +10,8 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       input: {
-        'test-integration': resolve(__dirname, 'src/main-test.js')
+        'test-integration': resolve(__dirname, 'src/main-test.js'),
+        'dt-editor': resolve(__dirname, 'src/main-editor.js')
       },
       output: {
         entryFileNames: `[name].js`,
