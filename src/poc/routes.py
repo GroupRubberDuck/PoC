@@ -1,23 +1,12 @@
 import json
-import os
-from flask import (
-    Blueprint,
-    render_template,
-    request,
-    redirect,
-    make_response,
-    flash,
-    current_app,
-    url_for,
-)
-from werkzeug.wrappers import Response
+from flask import Blueprint, request, make_response, current_app, jsonify
 from pydantic import ValidationError
 from bson.objectid import ObjectId
 from typing import Any
 from fpdf import FPDF
 
 from .models import DeviceConfig
-from .dt import DECISION_TREE
+from .dt import DECISION_TREE, Result, Node
 from .adapters import D3JSNodeAdapter
 
 bp = Blueprint("main", __name__)
@@ -36,6 +25,35 @@ def _get_device(device_id: str) -> DeviceConfig | None:
     if device_dict is None:
         return None
     return DeviceConfig(**device_dict)
+
+def valuta_albero(req_name: str, choices: dict) -> str:
+    """Attraversa l'albero decisionale in base alle scelte per trovare il risultato finale."""
+    if req_name not in DECISION_TREE:
+        return "Da valutare"
+    
+    current_node = DECISION_TREE[req_name]
+    
+    # Navighiamo l'albero finché siamo su un Nodo (domanda)
+    while isinstance(current_node, Node):
+        if current_node.name not in choices:
+            # L'utente non ha ancora risposto a questa domanda
+            return "Da valutare"
+        
+        # Prendiamo la risposta dell'utente (True = Yes, False = No)
+        risposta_yes = choices[current_node.name]
+        
+        # Scendiamo al ramo successivo
+        current_node = current_node.yes_child if risposta_yes else current_node.no_child
+        
+    # Se il ciclo finisce, significa che current_node è una foglia (Result)
+    if current_node == Result.PASS:
+        return "Conforme"
+    elif current_node == Result.FAIL:
+        return "Non conforme"
+    elif current_node == Result.NA:
+        return "Non applicabile"
+    
+    return "Da valutare"
 
 
 def _build_report_data(
@@ -65,40 +83,33 @@ def _build_report_data(
 
     return assets, columns, rows, compliant
 
-
-@bp.route("/<device_id>/report")
-def report(device_id: str) -> Response | str:
+@bp.route("/api/report/<device_id>", methods=["GET"])
+def api_report_data(device_id: str):
+    """API: Fornisce i dati strutturati per la tabella del report a schermo"""
     device = _get_device(device_id)
-    if device is None:
-        flash("Dispositivo non trovato.", "error")
-        return redirect(url_for("main.import_page"))
+    if not device:
+        return jsonify({"error": "Dispositivo non trovato"}), 404
 
-    assets, columns, rows, compliant = _build_report_data(device)
-    return render_template(
-        "report.html",
-        title=f"Report — {device.info.name}",
-        page_title=f"{device.info.name} — {device.info.os}",
-        info=device.info.model_dump(),
-        assets=assets,
-        columns=columns,
-        rows=rows,
-        device_id=device_id,
-        compliant=compliant,
-    )
+    # Usiamo la tua funzione Core già esistente!
+    assets, columns, rows, all_assessed = _build_report_data(device)
+
+    return jsonify({
+        "device_info": device.info.model_dump(),
+        "assets": assets,
+        "columns": columns,
+        "rows": rows,
+        "all_assessed": all_assessed
+    })
 
 
-@bp.route("/<device_id>/report/export")
-def report_export(device_id: str) -> Response:
-    """
-    @relation(UC28, scope=function)
-    @relation(UC28.1, scope=function)
-    """
+@bp.route("/api/report/<device_id>/export", methods=["GET"])
+def api_export_report(device_id: str):
+    """API: Genera e restituisce il file PDF del report"""
     device = _get_device(device_id)
-    if device is None:
-        flash("Dispositivo non trovato.", "error")
-        return redirect(url_for("main.import_page"))
+    if not device:
+        return jsonify({"error": "Dispositivo non trovato"}), 404
 
-    assets, columns, rows, compliant = _build_report_data(device)
+    assets, columns, rows, all_assessed = _build_report_data(device)
 
     COLOR_HEADER_BG = (44, 62, 80)
     COLOR_HEADER_TEXT = (255, 255, 255)
@@ -182,238 +193,136 @@ def report_export(device_id: str) -> Response:
     response.headers["Content-Disposition"] = (
         f"attachment; filename=report_{device_id}.pdf"
     )
+    
     return response
 
 
-@bp.route("/<device_id>/dt/<int:asset_id>/<requirement>")
-def decision_tree(device_id: str, asset_id: int, requirement: str) -> Response | str:
-    """
-    @relation(UC22.6.1, scope=function)
-    @relation(UC22.6.1.1, scope=function)
-    @relation(UC22.6.2.1, scope=function)
-    @relation(UC22.6.2.2, scope=function)
-    @relation(UC22.6.2.3, scope=function)
-    @relation(UC22.6.2.4, scope=function)
-    @relation(UC22.6.3, scope=function)
-    @relation(UC22.6.3.1, scope=function)
-    @relation(UC23.1, scope=function)
-    @relation(UC23.2, scope=function)
-    @relation(UC23.3, scope=function)
-    @relation(UC23.4, scope=function)
-    @relation(UC24.1, scope=function)
-    @relation(UC24.1.1, scope=function)
-    @relation(UC24.1.2, scope=function)
-    """
-    devices_collection = current_app.db["devices"]
-    device_dict = devices_collection.find_one({"_id": ObjectId(device_id)})
-
-    if device_dict is None:
-        flash("Dispositivo non trovato.", "error")
-        return redirect(url_for("main.import_page"))
-
-    device = DeviceConfig(**device_dict)
-
-    if asset_id < 1 or asset_id > len(device.assets):
-        flash("Asset inesistente.", "error")
-        return redirect(url_for("main.import_page"))
-
-    # Calcola il prossimo requisito da visualizzare e il prossimo asset (o dello stesso asset)
-    next_req_idx = (REQUIREMENTS.index(requirement) + 1) % len(REQUIREMENTS)
-    next_asset_id = asset_id
-    if next_req_idx == 0:
-        next_asset_id += 1
-
-    forward_link: str = f"/{device_id}/dt/{next_asset_id}/{REQUIREMENTS[next_req_idx]}"
-    if next_req_idx == 0 and next_asset_id > len(device.assets):
-        # Se il prossimo requisito è il primo (indice 0) e l'asset è l'ultimo,
-        # vuol dire che si è raggiunta la fine della visualizzazione dei decision tree
-        # e si può passare alla pagina di report
-        forward_link = f"/{device_id}/report"
-
-    # Calcola il precedente requisito da visualizzare e il precedente asset (o dello stesso asset)
-    prev_req_idx = (REQUIREMENTS.index(requirement) - 1) % len(REQUIREMENTS)
-    prev_asset_id = asset_id
-    if next_req_idx == len(REQUIREMENTS) - 1:
-        prev_asset_id -= 1
-
-    back_link: str = f"/{device_id}/dt/{prev_asset_id}/{REQUIREMENTS[prev_req_idx]}"
-    if prev_asset_id < 1:
-        # Se l'id dell'asset precedente è < 1 si è tornati al primo asset e quindi non
-        # si può più tornare indietro
-        back_link = ""
-
-    return render_template(
-        "decision_tree.html",
-        title=f"Decision Tree {device.assets[asset_id - 1].name} - {requirement}",
-        page_title=requirement,
-        assets=enumerate([a.name for a in device.assets]),
-        selected_asset=asset_id,
-        json_dt=D3JSNodeAdapter(
-            DECISION_TREE[requirement],
-            device.assets[asset_id - 1].dt[requirement],
-        ).asdict(),
-        back_link=back_link,
-        forward_link=forward_link,
-    )
-
-
-@bp.route("/<device_id>/dt/<int:asset_id>/<requirement>/updatedt")
-def update_decision_tree(device_id: str, asset_id: int, requirement: str) -> Response:
-    """Aggiornamento del decision tree modificando la risposta ad un requisito"""
-
-    # Validazione dei parametri in input
-    updateKey: str = request.args.get("set", "", type=str)
-    updateRawValue: str = request.args.get("value", "", type=str)
-    if updateKey == "":
-        return redirect(url_for("main.import_page"))
-
-    devices_collection = current_app.db["devices"]
-
-    # Per prima cosa si prende il dispositivo dal database
-    device_dict = devices_collection.find_one({"_id": ObjectId(device_id)})
-    if device_dict is None:
-        flash("Dispositivo non trovato.", "error")
-        return redirect(url_for("main.import_page"))
-
-    # Validazione asset_id
-    if asset_id < 1 or asset_id > len(device_dict["assets"]):
-        flash("Asset non trovato.", "error")
-        return redirect(url_for("main.import_page"))
-
-    # Aggiornamento della risposta al requisito nel decision tree
-    device_dict["assets"][asset_id - 1]["dt"][requirement][updateKey] = (
-        updateRawValue == "true"
-    )
-    devices_collection.update_one(
-        {"_id": ObjectId(device_id)}, {"$set": {"assets": device_dict["assets"]}}
-    )
-
-    # Rimanda l'utente alla visualizzazione del decision tree
-    return redirect(f"/{device_id}/dt/{asset_id}/{requirement}")
-
-
-# Logica della pagina di import
-@bp.route("/", methods=["GET", "POST"])
-def import_page():
-    """
-    @relation(UC05.1.1, scope=function)
-    @relation(UC06, scope=function)
-    """
-    if request.method == "POST":
-        # controlla se il caricamento è avvenuto con successo
-        if "file_json" not in request.files:
-            flash("Nessun file inviato al form.", "error")
-            return redirect(url_for("main.import_page"))
-
-        uploaded_file = request.files["file_json"]
-        filename = uploaded_file.filename
-        # controlla che sia stato selezionato un file
-        if filename == "":
-            flash("Nessun file selezionato.", "error")
-            return redirect(url_for("main.import_page"))
-
-        file_ext = os.path.splitext(filename)[1].lower()
-        # Controllo estensione
-        if file_ext != ".json":
-            flash("Il file deve avere estensione .json", "error")
-            return redirect(url_for("main.import_page"))
-
-        # controllo lunghezza
-        if request.content_length > (1024 * 1024):
-            flash("Il file supera la dimensione massima consentita di 1 MB.", "error")
-            return redirect(url_for("main.import_page"))
-
-        try:
-            raw_data = json.load(uploaded_file)
-
-            # controllo del formato da models
-            validated_device = DeviceConfig.model_validate(raw_data)
-            device_dict = validated_device.model_dump()
-            device_dict["status"] = "Imported"
-
-            devices_collection = current_app.db["devices"]
-
-            result = devices_collection.insert_one(device_dict)
-            new_device_id = str(result.inserted_id)
-
-            # return redirect(f"/{new_device_id}/dt/1/{REQUIREMENTS[0]}")
-            return redirect(url_for("main.dashboard_page", device_id=new_device_id))
-
-        except json.JSONDecodeError:
-            flash(
-                "Errore: Il file caricato non è un JSON valido o è malformato.", "error"
-            )
-            return redirect(url_for("main.import_page"))
-
-        except ValidationError as e:
-            error_messages = []
-            for error in e.errors():
-                field_path = " -> ".join(str(loc) for loc in error["loc"])
-                error_messages.append(
-                    f"Errore nel campo '{field_path}': {error['msg']}"
-                )
-
-                for msg in error_messages:
-                    flash(msg, "error")
-
-                return redirect(url_for("main.import_page"))
-        except Exception as e:
-            flash(f"Errore imprevisto durante la lettura: {str(e)}", "error")
-            return redirect(url_for("main.import_page"))
-
-    elif request.method == "GET":
-        return render_template(
-            "import.html", title="Importa Configurazione", page_title="Carica File JSON"
-        )
-
-
-@bp.route("/dashboard/<device_id>", methods=["GET", "POST"])
-def dashboard_page(device_id: str):
-    """
-    @relation(UC10, scope=function)
-    @relation(UC16, scope=function)
-    @relation(UC16.1, scope=function)
-    @relation(UC16.1.1, scope=function)
-    @relation(UC16.1.2, scope=function)
-    @relation(UC16.1.3, scope=function)
-    @relation(UC16.2, scope=function)
-    @relation(UC17.1, scope=function)
-    @relation(UC17.2, scope=function)
-    @relation(UC17.3, scope=function)
-    """
+@bp.route("/api/dashboard/<device_id>", methods=["GET"])
+def api_dashboard(device_id: str):
     try:
         device = current_app.db["devices"].find_one({"_id": ObjectId(device_id)})
     except Exception:
-        flash("ID dispositivo non valido.", "error")
-        return redirect(url_for("main.import_page"))
+        return jsonify({"error": "ID non valido"}), 400
 
     if not device:
-        flash("Dispositivo non trovato.", "error")
-        return redirect(url_for("main.import_page"))
+        return jsonify({"error": "Non trovato"}), 404
 
-    device_status = "Conforme"
+    device["_id"] = str(device["_id"])
+    
+    device_status_globale = "Conforme"
 
     for i, asset in enumerate(device["assets"]):
-        asset["dt_link"] = f"/{device_id}/dt/{i + 1}/{REQUIREMENTS[0]}"
         asset_status = "Conforme"
-
-        # ciclo che restituisce (chiave, valore)
-        for req_name, nodes in asset["dt"].items():
-            # se i nodi non sono tutti veri (NAND) -> mette che è da valutare
-            if not all(nodes.values()):
+        
+        # Controlliamo TUTTI i requisiti definiti (ACM-1, ACM-2, ecc.)
+        for req_name in REQUIREMENTS:
+            # Prendiamo le risposte dell'utente (se non ci sono, usiamo dict vuoto {})
+            choices = asset["dt"].get(req_name, {})
+            
+            # Interroghiamo il motore logico
+            stato_requisito = valuta_albero(req_name, choices)
+            
+            # Logica di aggregazione per l'Asset
+            if stato_requisito == "Da valutare":
                 asset_status = "Da valutare"
-                device_status = "Da valutare"
-                break
-        # UC16.3.1.3 -> si deve poter vedere lo stato aggregato dell'asset
-        # si aggiunge dopo a mano
+            elif stato_requisito == "Non conforme" and asset_status != "Da valutare":
+                asset_status = "Non conforme"
+                
+        # Logica di aggregazione per il Device globale
+        if asset_status == "Da valutare":
+            device_status_globale = "Da valutare"
+        elif asset_status == "Non conforme" and device_status_globale != "Da valutare":
+            device_status_globale = "Non conforme"
+
         asset["aggregated_status"] = asset_status
 
-    return render_template(
-        "dashboard.html",
-        title="Dashboard Dispositivo",
-        page_title="Dashboard",
-        device=device,
-        device_status=device_status,
-        valutation_link=f"/{device_id}/dt/1/{REQUIREMENTS[0]}",
-        report_link=f"/{device_id}/report",
+    return jsonify({
+        "device": device,
+        "device_status": device_status_globale
+    })
+
+@bp.route("/api/import", methods=["POST"])
+def api_import_device():
+    """Adapter di input: riceve il file e lo invia al Core (DeviceConfig)"""
+    if "file" not in request.files:
+        return jsonify({"error": "Nessun file inviato."}), 400
+        
+    file = request.files["file"]
+    
+    try:
+        # Carichiamo il contenuto del file
+        data = json.load(file)
+        
+        # CHIAMATA AL CORE: Validazione con il modello Pydantic (models.py)
+        # Se i dati sono sbagliati, Pydantic solleva ValidationError
+        device_config = DeviceConfig(**data)
+        
+        # Salvataggio tramite Adapter di Persistenza (MongoDB)
+        result = current_app.db["devices"].insert_one(device_config.model_dump())
+        
+        # Risposta di successo con l'ID per il frontend
+        return jsonify({
+            "message": "Importazione completata",
+            "device_id": str(result.inserted_id)
+        }), 201
+
+    except ValidationError as e:
+        return jsonify({"error": "Schema JSON non valido", "details": e.errors()}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@bp.route("/api/dt/<device_id>/<int:asset_index>/<requirement>", methods=["GET"])
+def api_get_tree(device_id, asset_index, requirement):
+    """API: Fornisce i dati dell'albero formattati per D3.js e la navigazione"""
+    device = _get_device(device_id)
+    if not device:
+        return jsonify({"error": "Device non trovato"}), 404
+    
+    try:
+        asset = device.assets[asset_index]
+        choices = asset.dt.get(requirement, {})
+    except IndexError:
+        return jsonify({"error": "Asset non trovato"}), 404
+
+    adapter = D3JSNodeAdapter(DECISION_TREE[requirement], choices)
+    
+    # --- NUOVA LOGICA DI NAVIGAZIONE ---
+    try:
+        req_index = REQUIREMENTS.index(requirement)
+        prev_req = REQUIREMENTS[req_index - 1] if req_index > 0 else None
+        next_req = REQUIREMENTS[req_index + 1] if req_index < len(REQUIREMENTS) - 1 else None
+    except ValueError:
+        prev_req, next_req = None, None
+    # -----------------------------------
+
+    return jsonify({
+        "tree_data": adapter.asdict(),
+        "asset_name": asset.name,
+        "requirement": requirement,
+        "prev_req": prev_req,  # Inviato a Vue
+        "next_req": next_req   # Inviato a Vue
+    })
+
+
+@bp.route("/api/dt/update", methods=["POST"])
+def api_update_tree():
+    """API: Salva una scelta (Yes/No) fatta nell'albero"""
+    data = request.json
+    device_id = data.get("device_id")
+    asset_index = int(data.get("asset_index")) 
+    requirement = data.get("requirement")
+    node_name = data.get("node_name")
+    value = bool(data.get("value"))
+
+    devices_collection = current_app.db["devices"]
+    
+    # Aggiornamento mirato su MongoDB usando la notazione a punti di Mongo
+    update_path = f"assets.{asset_index}.dt.{requirement}.{node_name}"
+    
+    devices_collection.update_one(
+        {"_id": ObjectId(device_id)},
+        {"$set": {update_path: value}}
     )
+    
+    return jsonify({"status": "success"})
