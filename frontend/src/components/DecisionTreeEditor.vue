@@ -1,4 +1,5 @@
 <template>
+  <strong>Ultima modifica fix flickering tentativo 1</strong>
   <div id="tree-container" style="width: 100%; height: 600px; overflow: auto; background: #f8f9fa; border-radius: 8px;">
     <svg width="100%" height="100%" :viewBox="`0 0 ${svgWidth} ${svgHeight}`">
       <g :transform="`translate(${offsetX}, 60)`">
@@ -57,26 +58,26 @@ const props = defineProps({
   deviceId: String
 })
 
-// Costanti dimensionali (Mantenute dal tuo codice originale)
+// 1. TRASFORMIAMO LE PROPS IN UNO STATO MUTABILE
+// Così, quando scarichiamo il nuovo albero, la grafica si aggiorna da sola
+const currentTreeData = ref(props.initialTree)
+
 const NODE_W = 260
 const NODE_H = 70
 const SMALL_NODE_W = 100
 const SMALL_NODE_H = 40
 
-// Stato per le dimensioni dinamiche
 const svgWidth = ref(1000)
 const svgHeight = ref(800)
 const offsetX = ref(0)
 
-// Helper visivo
 const isLargeNode = (node) => node.data.desc && node.data.desc.length > 10
 
-// CALCOLO DELL'ALBERO TRAMITE D3 (La Mente)
+// 2. AGGIORNIAMO IL COMPUTED PER USARE IL NUOVO STATO REATTIVO
 const treeLayout = computed(() => {
-  // Prepariamo la gerarchia
-  const root = d3.hierarchy(props.initialTree)
+  // Usiamo currentTreeData.value invece di props.initialTree!
+  const root = d3.hierarchy(currentTreeData.value) 
   
-  // Impostiamo il layout D3
   const layout = d3.tree()
     .nodeSize([NODE_W + 30, NODE_H + 40])
     .separation((a, b) => a.parent === b.parent ? 1 : 1.3)
@@ -85,11 +86,9 @@ const treeLayout = computed(() => {
   return root
 })
 
-// Estraiamo Nodi e Link per Vue (Le Braccia)
 const nodes = computed(() => treeLayout.value.descendants())
 const links = computed(() => treeLayout.value.links())
 
-// Funzione per disegnare le linee di collegamento
 const generateLinkPath = (link) => {
   const linkGen = d3.linkVertical()
     .x(d => d.x)
@@ -100,35 +99,64 @@ const generateLinkPath = (link) => {
   })
 }
 
-// Centratura automatica al caricamento
-onMounted(() => {
+// Estraiamo la logica di centratura in una funzione per poterla riusare
+const centerTree = () => {
   const xs = nodes.value.map(d => d.x)
   const minX = Math.min(...xs)
   const maxX = Math.max(...xs)
   const treeW = maxX - minX
   
-  // Aggiorniamo le dimensioni stimate
   svgWidth.value = treeW + NODE_W * 2
   svgHeight.value = Math.max(...nodes.value.map(d => d.y)) + NODE_H * 3
-  
-  // Centriamo l'albero calcolando l'offset
   offsetX.value = (svgWidth.value / 2) - (treeW / 2) - minX
+}
+
+onMounted(() => {
+  centerTree()
 })
 
-// Gestione del Click
-const handleNodeClick = (node) => {
-  if (!node.parent) return; // La root non si clicca
+// 3. LA NUOVA FUNZIONE DI CLICK (LA MAGIA ANTI-FLICKERING)
+const handleNodeClick = async (node) => {
+  if (!node.parent) return; 
   
-  // Scopriamo se è il figlio "Yes" (sinistro) o "No" (destro)
   const isYesChild = node.parent.children[0] === node
   
-  console.log(`Cliccato nodo: ${node.data.name}, Risposta: ${isYesChild}`)
+  // Costruiamo l'URL esatto che usavi prima
+  const currentUrl = window.location.href.split('?')[0] // Puliamo eventuali parametri
+  const updateUrl = `${currentUrl}/updatedt?set=${node.parent.data.name}&value=${isYesChild}`
   
-  // Per ora manteniamo il tuo redirect originale per non rompere il backend
-  // In futuro, qui metteremo una fetch() per un aggiornamento invisibile!
-  const currentUrl = window.location.href
-  window.location.href = `${currentUrl}/updatedt?set=${node.parent.data.name}&value=${isYesChild}`
+  try {
+    // A. Facciamo la chiamata al backend in modo invisibile
+    const response = await fetch(updateUrl)
+    
+    if (response.ok) {
+      // B. Flask ci ha risposto con la nuova pagina HTML aggiornata
+      const htmlText = await response.text()
+      
+      // C. Usiamo un parser finto per leggere l'HTML senza mostrarlo a schermo
+      const parser = new DOMParser()
+      const doc = parser.parseFromString(htmlText, 'text/html')
+      
+      // D. Peschiamo il div bersaglio e rubiamo il nuovo JSON
+      const newDiv = doc.getElementById('DT-valutabile')
+      if (newDiv && newDiv.dataset.tree) {
+        const newTreeJson = JSON.parse(newDiv.dataset.tree)
+        
+        // E. Aggiorniamo lo stato di Vue! 
+        // L'albero cambierà forma e colori istantaneamente con un'animazione fluida
+        currentTreeData.value = newTreeJson
+        
+        // Ricalcoliamo il centro per evitare che l'albero esca dallo schermo
+        setTimeout(() => centerTree(), 50) 
+      }
+    } else {
+      console.error("Errore dal backend:", response.status)
+    }
+  } catch (error) {
+    console.error("Errore di rete durante l'aggiornamento:", error)
+  }
 }
+
 </script>
 
 <style scoped>
