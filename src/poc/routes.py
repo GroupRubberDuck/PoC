@@ -55,7 +55,6 @@ def valuta_albero(req_name: str, choices: dict) -> str:
     
     return "Da valutare"
 
-
 def _build_report_data(
     device: DeviceConfig,
 ) -> tuple[list[dict[str, Any]], list[str], list[str], bool]:
@@ -100,7 +99,6 @@ def api_report_data(device_id: str):
         "rows": rows,
         "all_assessed": all_assessed
     })
-
 
 @bp.route("/api/report/<device_id>/export", methods=["GET"])
 def api_export_report(device_id: str):
@@ -196,7 +194,6 @@ def api_export_report(device_id: str):
     
     return response
 
-
 @bp.route("/api/dashboard/<device_id>", methods=["GET"])
 def api_dashboard(device_id: str):
     try:
@@ -271,7 +268,6 @@ def api_import_device():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
 @bp.route("/api/dt/<device_id>/<int:asset_index>/<requirement>", methods=["GET"])
 def api_get_tree(device_id, asset_index, requirement):
     """API: Fornisce i dati dell'albero formattati per D3.js e la navigazione"""
@@ -287,14 +283,12 @@ def api_get_tree(device_id, asset_index, requirement):
 
     adapter = D3JSNodeAdapter(DECISION_TREE[requirement], choices)
     
-    # --- NUOVA LOGICA DI NAVIGAZIONE ---
     try:
         req_index = REQUIREMENTS.index(requirement)
         prev_req = REQUIREMENTS[req_index - 1] if req_index > 0 else None
         next_req = REQUIREMENTS[req_index + 1] if req_index < len(REQUIREMENTS) - 1 else None
     except ValueError:
         prev_req, next_req = None, None
-    # -----------------------------------
 
     return jsonify({
         "tree_data": adapter.asdict(),
@@ -303,7 +297,6 @@ def api_get_tree(device_id, asset_index, requirement):
         "prev_req": prev_req,  # Inviato a Vue
         "next_req": next_req   # Inviato a Vue
     })
-
 
 @bp.route("/api/dt/update", methods=["POST"])
 def api_update_tree():
